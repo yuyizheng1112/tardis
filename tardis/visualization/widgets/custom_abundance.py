@@ -29,7 +29,6 @@ from tardis.visualization.widgets.util import debounce
 
 BASE_DIR = tardis.__path__[0]
 YAML_DELIMITER = "---"
-COLORMAP = "viridis"
 
 
 class CustomYAML(yaml.YAMLObject):
@@ -107,6 +106,10 @@ class CustomAbundanceWidget:
         The index of the bool corresponds to the index of checkbox.
     elements : list of str
         A list of elements or isotopes' symbols.
+    fig : plotly.graph_objs._figurewidget.FigureWidget
+        The figure object of abundance density plot.
+    plot_cmap : str, default: 'jet', optional
+        String defines the colormap used in abundance density plot.
     _trigger : bool
         If False, disable the callback when abundance input is changed.
     """
@@ -128,10 +131,10 @@ class CustomAbundanceWidget:
         self.abundance = abundance
         self.velocity = velocity.to("km/s")
         self.elements = self.get_symbols()
+        self.fig = go.FigureWidget()
         self._trigger = True
 
         self.create_widgets()
-        self.generate_abundance_density_plot()
         self.density_editor = DensityEditor(
             density_t_0,
             self.density,
@@ -790,7 +793,7 @@ class CustomAbundanceWidget:
             )
             self.fig.data = fig_data_lst[:-1]
 
-            colorscale = transition_colors(self.no_of_elements, COLORMAP)
+            colorscale = transition_colors(self.no_of_elements, self.plot_cmap)
             for i in range(self.no_of_elements):
                 self.fig.data[2 + i].line.color = colorscale[i]
 
@@ -922,7 +925,6 @@ class CustomAbundanceWidget:
 
     def generate_abundance_density_plot(self):
         """Generate abundance and density plot in different shells."""
-        self.fig = go.FigureWidget()
         title = "Abundance/Density vs Velocity"
         data = self.abundance
 
@@ -952,7 +954,7 @@ class CustomAbundanceWidget:
             ),
         )
 
-        colorscale = transition_colors(self.no_of_elements, COLORMAP)
+        colorscale = transition_colors(self.no_of_elements, self.plot_cmap)
         for i in range(self.no_of_elements):
             self.fig.add_trace(
                 go.Scatter(
@@ -988,8 +990,13 @@ class CustomAbundanceWidget:
             ),
         )
 
-    def display(self):
+    def display(self, cmap="jet"):
         """Display the GUI.
+
+        Parameters
+        ----------
+            cmap : str, default: 'jet', optional
+                String defines the colormap used in abundance density plot.
 
         Returns
         -------
@@ -1067,6 +1074,9 @@ class CustomAbundanceWidget:
                 ),
             ]
         )
+
+        self.plot_cmap = cmap
+        self.generate_abundance_density_plot()
         self.read_abundance()
         self.density_editor.read_density()
 
