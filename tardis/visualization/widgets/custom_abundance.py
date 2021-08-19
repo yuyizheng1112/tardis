@@ -29,264 +29,6 @@ from tardis.visualization.widgets.util import debounce
 
 BASE_DIR = tardis.__path__[0]
 YAML_DELIMITER = "---"
-COLORMAP = "jet"
-
-
-class CustomAbundanceWidgetData:
-    """The model information and data that required in custom
-    abundance widget.
-
-    Attributes
-    ----------
-    elements : list of str
-        A list of elements or isotopes' symbols.
-    """
-
-    def __init__(self, density_t_0, density, abundance, velocity):
-        """Initialize CustomAbundanceWidgetData with model information.
-
-        Parameters
-        ----------
-        density_t_0 : astropy.units.quantity.Quantity
-            Initial time for the density in the model.
-        density : astropy.units.quantity.Quantity
-        abundance : pd.DataFrame
-        velocity : astropy.units.quantity.Quantity
-        """
-        self.density_t_0 = density_t_0.to("day")
-        self.density = density.to("g cm^-3")
-        self.abundance = abundance
-        self.velocity = velocity.to("km/s")
-        self.elements = self.get_symbols()
-
-    def get_symbols(self):
-        """Get symbol string from atomic number and mass number."""
-        str_symbols = np.array(
-            self.abundance.index.get_level_values(0).map(
-                atomic_number2element_symbol
-            )
-        )
-        str_mass = np.array(
-            self.abundance.index.get_level_values(1), dtype="str"
-        )
-        return np.add(str_symbols, str_mass)
-
-    @classmethod
-    def from_csvy(cls, fpath):
-        """Create a new CustomAbundanceWidgetData instance with data
-        from CSVY file.
-
-        Parameters
-        ----------
-        fpath : str
-            the path of CSVY file.
-
-        Returns
-        -------
-        CustomAbundanceWidgetData
-        """
-        csvy_model_config, csvy_model_data = load_csvy(fpath)
-        csvy_schema_file = os.path.join(
-            BASE_DIR, "../..", "io", "schemas", "csvy_model.yml"
-        )
-        csvy_model_config = Configuration(
-            validate_dict(csvy_model_config, schemapath=csvy_schema_file)
-        )
-
-        if hasattr(csvy_model_config, "velocity"):
-            velocity = quantity_linspace(
-                csvy_model_config.velocity.start,
-                csvy_model_config.velocity.stop,
-                csvy_model_config.velocity.num + 1,
-            ).cgs
-        else:
-            velocity_field_index = [
-                field["name"] for field in csvy_model_config.datatype.fields
-            ].index("velocity")
-            velocity_unit = u.Unit(
-                csvy_model_config.datatype.fields[velocity_field_index]["unit"]
-            )
-            velocity = csvy_model_data["velocity"].values * velocity_unit
-
-        no_of_shells = len(velocity) - 1
-
-        if hasattr(csvy_model_config, "density"):
-            adjusted_velocity = velocity.insert(0, 0)
-            v_middle = (
-                adjusted_velocity[1:] * 0.5 + adjusted_velocity[:-1] * 0.5
-            )
-            no_of_shells = len(adjusted_velocity) - 1
-
-            d_conf = csvy_model_config.density
-            density_type = d_conf.type
-            if density_type == "branch85_w7":
-                density_0 = calculate_power_law_density(
-                    v_middle, d_conf.w7_v_0, d_conf.w7_rho_0, -7
-                )
-                time_0 = d_conf.w7_time_0
-            elif density_type == "uniform":
-                density_0 = d_conf.value.to("g cm^-3") * np.ones(no_of_shells)
-                time_0 = d_conf.get("time_0", 0 * u.day)
-            elif density_type == "power_law":
-                density_0 = calculate_power_law_density(
-                    v_middle, d_conf.v_0, d_conf.rho_0, d_conf.exponent
-                )
-                time_0 = d_conf.get("time_0", 0 * u.day)
-            elif density_type == "exponential":
-                density_0 = calculate_exponential_density(
-                    v_middle, d_conf.v_0, d_conf.rho_0
-                )
-                time_0 = d_conf.get("time_0", 0 * u.day)
-            else:
-                raise ValueError(f"Unrecognized density type " f"{d_conf.type}")
-        else:
-            density_field_index = [
-                field["name"] for field in csvy_model_config.datatype.fields
-            ].index("density")
-            density_unit = u.Unit(
-                csvy_model_config.datatype.fields[density_field_index]["unit"]
-            )
-            density_0 = csvy_model_data["density"].values * density_unit
-
-        if hasattr(csvy_model_config, "abundance"):
-            abundances_section = csvy_model_config.abundance
-            abundance, isotope_abundance = read_uniform_abundances(
-                abundances_section, no_of_shells
-            )
-        else:
-            _, abundance, isotope_abundance = parse_csv_abundances(
-                csvy_model_data
-            )
-            abundance = abundance.loc[:, 1:]
-            abundance.columns = np.arange(abundance.shape[1])
-            isotope_abundance = isotope_abundance.loc[:, 1:]
-            isotope_abundance.columns = np.arange(isotope_abundance.shape[1])
-
-        abundance = abundance.replace(np.nan, 0.0)
-        abundance = abundance[abundance.sum(axis=1) > 0]
-        isotope_abundance = isotope_abundance.replace(np.nan, 0.0)
-        isotope_abundance = isotope_abundance[isotope_abundance.sum(axis=1) > 0]
-
-        # Combine elements and isotopes to one DataFrame
-        abundance["mass_number"] = ""
-        abundance.set_index("mass_number", append=True, inplace=True)
-        abundance = pd.concat([abundance, isotope_abundance])
-        abundance.sort_index(inplace=True)
-
-        return cls(
-            density_t_0=time_0,
-            density=density_0,
-            abundance=abundance,
-            velocity=velocity,
-        )
-
-    @classmethod
-    def from_yml(cls, fpath):
-        """Create a new CustomAbundanceWidgetData instance with data
-        from YAML file.
-
-        Parameters
-        ----------
-        fpath : str
-            The path of YAML file.
-
-        Returns
-        -------
-        CustomAbundanceWidgetData
-        """
-        config = Configuration.from_yaml(fpath)
-
-        if hasattr(config, "csvy_model"):
-            model = Radial1DModel.from_csvy(config)
-        else:
-            model = Radial1DModel.from_config(config)
-
-        velocity = model.velocity
-        density_t_0 = model.homologous_density.time_0
-        density = model.homologous_density.density_0
-        abundance = model.raw_abundance
-        isotope_abundance = model.raw_isotope_abundance
-
-        # Combine elements and isotopes to one DataFrame
-        abundance["mass_number"] = ""
-        abundance.set_index("mass_number", append=True, inplace=True)
-        abundance = pd.concat([abundance, isotope_abundance])
-        abundance.sort_index(inplace=True)
-
-        return cls(
-            density_t_0=density_t_0,
-            density=density,
-            abundance=abundance,
-            velocity=velocity,
-        )
-
-    @classmethod
-    def from_hdf(cls, fpath):
-        """Create a new CustomAbundanceWidgetData instance with data
-        from HDF file.
-
-        Parameters
-        ----------
-        fpath : str
-            the path of HDF file.
-
-        Returns
-        -------
-        CustomAbundanceWidgetData
-        """
-        with pd.HDFStore(fpath, "r") as hdf:
-            abundance = hdf["/simulation/plasma/abundance"]
-            _density_t_0 = hdf["/simulation/model/homologous_density/scalars"]
-            _density = hdf["/simulation/model/homologous_density/density_0"]
-            v_inner = hdf["/simulation/model/v_inner"]
-            v_outer = hdf["/simulation/model/v_outer"]
-
-        density_t_0 = float(_density_t_0) * u.s
-        density = np.array(_density) * u.g / (u.cm) ** 3
-        velocity = np.append(v_inner, v_outer[len(v_outer) - 1]) * u.cm / u.s
-
-        abundance["mass_number"] = ""
-        abundance.set_index("mass_number", append=True, inplace=True)
-
-        return cls(
-            density_t_0=density_t_0,
-            density=density,
-            abundance=abundance,
-            velocity=velocity,
-        )
-
-    @classmethod
-    def from_simulation(cls, sim):
-        """Create a new CustomAbundanceWidgetData instance from a
-        Simulation object.
-
-        Parameters
-        ----------
-        sim : Simulation
-
-        Returns
-        -------
-        CustomAbundanceWidgetData
-        """
-        abundance = sim.model.raw_abundance.copy()
-        isotope_abundance = sim.model.raw_isotope_abundance.copy()
-
-        # integrate element and isotope to one DataFrame
-        abundance["mass_number"] = ""
-        abundance.set_index("mass_number", append=True, inplace=True)
-        abundance = pd.concat([abundance, isotope_abundance])
-        abundance.sort_index(inplace=True)
-
-        velocity = sim.model.velocity
-        density_t_0 = sim.model.homologous_density.time_0
-        density = sim.model.homologous_density.density_0
-
-        return cls(
-            density_t_0=density_t_0,
-            density=density,
-            abundance=abundance,
-            velocity=velocity,
-        )
 
 
 class CustomYAML(yaml.YAMLObject):
@@ -362,6 +104,10 @@ class CustomAbundanceWidget:
     checked_list : list of bool
         A list of bool to record whether the checkbox is checked.
         The index of the bool corresponds to the index of checkbox.
+    fig : plotly.graph_objs._figurewidget.FigureWidget
+        The figure object of abundance density plot.
+    plot_cmap : str, default: 'jet', optional
+        String defines the colormap used in abundance density plot.
     _trigger : bool
         If False, disable the callback when abundance input is changed.
     """
@@ -377,10 +123,10 @@ class CustomAbundanceWidget:
         widget_data : CustomAbundanceWidgetData
         """
         self.data = widget_data
+        self.fig = go.FigureWidget()
         self._trigger = True
 
         self.create_widgets()
-        self.generate_abundance_density_plot()
         self.density_editor = DensityEditor(
             self.data,
             self.fig,
@@ -1024,7 +770,7 @@ class CustomAbundanceWidget:
             )
             self.fig.data = fig_data_lst[:-1]
 
-            colorscale = transition_colors(self.no_of_elements, COLORMAP)
+            colorscale = transition_colors(self.no_of_elements, self.plot_cmap)
             for i in range(self.no_of_elements):
                 self.fig.data[2 + i].line.color = colorscale[i]
 
@@ -1156,7 +902,6 @@ class CustomAbundanceWidget:
 
     def generate_abundance_density_plot(self):
         """Generate abundance and density plot in different shells."""
-        self.fig = go.FigureWidget()
         title = "Abundance/Density vs Velocity"
         abundance = self.data.abundance
         velocity = self.data.velocity
@@ -1188,7 +933,7 @@ class CustomAbundanceWidget:
             ),
         )
 
-        colorscale = transition_colors(self.no_of_elements, COLORMAP)
+        colorscale = transition_colors(self.no_of_elements, self.plot_cmap)
         for i in range(self.no_of_elements):
             self.fig.add_trace(
                 go.Scatter(
@@ -1224,8 +969,13 @@ class CustomAbundanceWidget:
             ),
         )
 
-    def display(self):
+    def display(self, cmap="jet"):
         """Display the GUI.
+
+        Parameters
+        ----------
+            cmap : str, default: 'jet', optional
+                String defines the colormap used in abundance density plot.
 
         Returns
         -------
@@ -1303,6 +1053,9 @@ class CustomAbundanceWidget:
                 ),
             ]
         )
+
+        self.plot_cmap = cmap
+        self.generate_abundance_density_plot()
         self.read_abundance()
         self.density_editor.read_density()
 
