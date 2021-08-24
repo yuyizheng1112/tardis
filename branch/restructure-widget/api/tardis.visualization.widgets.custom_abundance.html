@@ -271,12 +271,12 @@
 <p>Class to create and display Custom Abundance Widget.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="tardis.visualization.widgets.custom_abundance.CustomAbundanceWidget">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">tardis.visualization.widgets.custom_abundance.</span></span><span class="sig-name descname"><span class="pre">CustomAbundanceWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">density_t_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abundance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velocity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tardis/visualization/widgets/custom_abundance.html#CustomAbundanceWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tardis.visualization.widgets.custom_abundance.CustomAbundanceWidget" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">tardis.visualization.widgets.custom_abundance.</span></span><span class="sig-name descname"><span class="pre">CustomAbundanceWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tardis/visualization/widgets/custom_abundance.html#CustomAbundanceWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tardis.visualization.widgets.custom_abundance.CustomAbundanceWidget" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Widget to edit abundances and densities of simulation model
 graphically.</p>
 <p>It generates a GUI based on input data. The GUI has a plot section
-to visualize the profile, a edit section to allow the user directly
+to visualize the profile, an edit section to allow the user directly
 edit abundance and density profile, and an output section to output
 the model to CSVY file.</p>
 <dl class="field-list simple">
@@ -291,21 +291,17 @@ the model to CSVY file.</p>
 <dt><strong>checked_list</strong><span class="classifier">list of bool</span></dt><dd><p>A list of bool to record whether the checkbox is checked.
 The index of the bool corresponds to the index of checkbox.</p>
 </dd>
-<dt><strong>elements</strong><span class="classifier">list of str</span></dt><dd><p>A list of elements or isotopes’ symbols.</p>
-</dd>
 <dt><strong>_trigger</strong><span class="classifier">bool</span></dt><dd><p>If False, disable the callback when abundance input is changed.</p>
 </dd>
 </dl>
 </dd>
 </dl>
-<p>Initialize CustomAbundanceWidget with density, abundance and
-velocity data.</p>
+<p>Initialize CustomAbundanceWidget with data and generate
+the widgets and plot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>density</strong><span class="classifier">astropy.units.quantity.Quantity</span></dt><dd><p>abundance : pd.DataFrame
-velocity : astropy.units.quantity.Quantity</p>
-</dd>
+<dt><strong>widget_data</strong><span class="classifier">CustomAbundanceWidgetData</span></dt><dd></dd>
 </dl>
 </dd>
 </dl>
@@ -480,12 +476,6 @@ Triggered if the dropdown value is changed.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tardis.visualization.widgets.custom_abundance.CustomAbundanceWidget.get_symbols">
-<span class="sig-name descname"><span class="pre">get_symbols</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tardis/visualization/widgets/custom_abundance.html#CustomAbundanceWidget.get_symbols"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tardis.visualization.widgets.custom_abundance.CustomAbundanceWidget.get_symbols" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get symbol string from atomic number and mass number.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="tardis.visualization.widgets.custom_abundance.CustomAbundanceWidget.input_item_eventhandler">
 <span class="sig-name descname"><span class="pre">input_item_eventhandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tardis/visualization/widgets/custom_abundance.html#CustomAbundanceWidget.input_item_eventhandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tardis.visualization.widgets.custom_abundance.CustomAbundanceWidget.input_item_eventhandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the data and the widget when it gets new abundance
@@ -637,16 +627,12 @@ normalize button is clicked.</p>
 <span class="sig-name descname"><span class="pre">overwrite_existing_shells</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tardis/visualization/widgets/custom_abundance.html#CustomAbundanceWidget.overwrite_existing_shells"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tardis.visualization.widgets.custom_abundance.CustomAbundanceWidget.overwrite_existing_shells" title="Permalink to this definition">¶</a></dt>
 <dd><p>Judge whether the existing shell(s) will be overwritten when
 inserting a new shell within the entered velocity range.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl>
-<dt><strong>v_0</strong><span class="classifier">float</span></dt><dd><blockquote>
-<div><p>The velocity of inner boundary.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>v_1<span class="classifier">float</span></dt><dd><p>The velocity of outer boundary.</p>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>v_0</strong><span class="classifier">float</span></dt><dd><p>The velocity of inner boundary.</p>
 </dd>
-</dl>
+<dt><strong>v_1</strong><span class="classifier">float</span></dt><dd><p>The velocity of outer boundary.</p>
 </dd>
 </dl>
 </dd>
@@ -720,16 +706,12 @@ mode. Triggered if the toggle button is changed.</p>
 <dt class="sig sig-object py" id="tardis.visualization.widgets.custom_abundance.CustomAbundanceWidget.to_csvy">
 <span class="sig-name descname"><span class="pre">to_csvy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tardis/visualization/widgets/custom_abundance.html#CustomAbundanceWidget.to_csvy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tardis.visualization.widgets.custom_abundance.CustomAbundanceWidget.to_csvy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Output CSVY file on the specified path.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl>
-<dt><strong>path</strong><span class="classifier">str</span></dt><dd><blockquote>
-<div><p>Output path.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>overwrite<span class="classifier">bool</span></dt><dd><p>True if overwriting, False otherwise.</p>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>path</strong><span class="classifier">str</span></dt><dd><p>Output path.</p>
 </dd>
-</dl>
+<dt><strong>overwrite</strong><span class="classifier">bool</span></dt><dd><p>True if overwriting, False otherwise.</p>
 </dd>
 </dl>
 </dd>
@@ -763,16 +745,12 @@ end when selected shell No. is changed.</p>
 <dd><p>Update the value of the widget in the list of abundance inputs.</p>
 <p>Keep two decimal places for displayed value and disable
 <a class="reference internal" href="#tardis.visualization.widgets.custom_abundance.CustomAbundanceWidget.input_item_eventhandler" title="tardis.visualization.widgets.custom_abundance.CustomAbundanceWidget.input_item_eventhandler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_item_eventhandler</span></code></a> while changing the value.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl>
-<dt><strong>index</strong><span class="classifier">int</span></dt><dd><blockquote>
-<div><p>The index of the widget in the list of abundance inputs.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>value<span class="classifier">float</span></dt><dd><p>New abundance value.</p>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>index</strong><span class="classifier">int</span></dt><dd><p>The index of the widget in the list of abundance inputs.</p>
 </dd>
-</dl>
+<dt><strong>value</strong><span class="classifier">float</span></dt><dd><p>New abundance value.</p>
 </dd>
 </dl>
 </dd>
@@ -808,27 +786,136 @@ end when selected shell No. is changed.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="tardis.visualization.widgets.custom_abundance.CustomAbundanceWidgetData">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">tardis.visualization.widgets.custom_abundance.</span></span><span class="sig-name descname"><span class="pre">CustomAbundanceWidgetData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">density_t_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abundance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velocity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tardis/visualization/widgets/custom_abundance.html#CustomAbundanceWidgetData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tardis.visualization.widgets.custom_abundance.CustomAbundanceWidgetData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The model information and data that required in custom
+abundance widget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>elements</strong><span class="classifier">list of str</span></dt><dd><p>A list of elements or isotopes’ symbols.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>Initialize CustomAbundanceWidgetData with model information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>density_t_0</strong><span class="classifier">astropy.units.quantity.Quantity</span></dt><dd><p>Initial time for the density in the model.</p>
+</dd>
+<dt><strong>density</strong><span class="classifier">astropy.units.quantity.Quantity</span></dt><dd></dd>
+<dt><strong>abundance</strong><span class="classifier">pd.DataFrame</span></dt><dd></dd>
+<dt><strong>velocity</strong><span class="classifier">astropy.units.quantity.Quantity</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="tardis.visualization.widgets.custom_abundance.CustomAbundanceWidgetData.from_csvy">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_csvy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fpath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tardis/visualization/widgets/custom_abundance.html#CustomAbundanceWidgetData.from_csvy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tardis.visualization.widgets.custom_abundance.CustomAbundanceWidgetData.from_csvy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new CustomAbundanceWidgetData instance with data
+from CSVY file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>fpath</strong><span class="classifier">str</span></dt><dd><p>the path of CSVY file.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>CustomAbundanceWidgetData</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tardis.visualization.widgets.custom_abundance.CustomAbundanceWidgetData.from_hdf">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_hdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fpath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tardis/visualization/widgets/custom_abundance.html#CustomAbundanceWidgetData.from_hdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tardis.visualization.widgets.custom_abundance.CustomAbundanceWidgetData.from_hdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new CustomAbundanceWidgetData instance with data
+from HDF file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>fpath</strong><span class="classifier">str</span></dt><dd><p>the path of HDF file.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>CustomAbundanceWidgetData</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tardis.visualization.widgets.custom_abundance.CustomAbundanceWidgetData.from_simulation">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tardis/visualization/widgets/custom_abundance.html#CustomAbundanceWidgetData.from_simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tardis.visualization.widgets.custom_abundance.CustomAbundanceWidgetData.from_simulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new CustomAbundanceWidgetData instance from a
+Simulation object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>sim</strong><span class="classifier">Simulation</span></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>CustomAbundanceWidgetData</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tardis.visualization.widgets.custom_abundance.CustomAbundanceWidgetData.from_yml">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_yml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fpath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tardis/visualization/widgets/custom_abundance.html#CustomAbundanceWidgetData.from_yml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tardis.visualization.widgets.custom_abundance.CustomAbundanceWidgetData.from_yml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new CustomAbundanceWidgetData instance with data
+from YAML file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>fpath</strong><span class="classifier">str</span></dt><dd><p>The path of YAML file.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>CustomAbundanceWidgetData</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tardis.visualization.widgets.custom_abundance.CustomAbundanceWidgetData.get_symbols">
+<span class="sig-name descname"><span class="pre">get_symbols</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tardis/visualization/widgets/custom_abundance.html#CustomAbundanceWidgetData.get_symbols"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tardis.visualization.widgets.custom_abundance.CustomAbundanceWidgetData.get_symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get symbol string from atomic number and mass number.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="tardis.visualization.widgets.custom_abundance.CustomYAML">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">tardis.visualization.widgets.custom_abundance.</span></span><span class="sig-name descname"><span class="pre">CustomYAML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_time_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i_time_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_inner_boundary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_outer_boundary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tardis/visualization/widgets/custom_abundance.html#CustomYAML"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tardis.visualization.widgets.custom_abundance.CustomYAML" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">yaml.YAMLObject</span></code></p>
 <p>A custom YAML object generated by required properties.</p>
 <p>Initialize CustomYAML object with given properties.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl>
-<dt><strong>name</strong><span class="classifier">str</span></dt><dd><blockquote>
-<div><p>Name of the YAML file.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>d_time_0<span class="classifier">astropy.units.quantity.Quantity</span></dt><dd><p>Initial time for the density in the model.</p>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>name</strong><span class="classifier">str</span></dt><dd><p>Name of the YAML file.</p>
 </dd>
-<dt>i_time_0<span class="classifier">astropy.units.quantity.Quantity</span></dt><dd><p>Initial time for isotope decay. Set to 0 for no isotopes.</p>
+<dt><strong>d_time_0</strong><span class="classifier">astropy.units.quantity.Quantity</span></dt><dd><p>Initial time for the density in the model.</p>
 </dd>
-<dt>v_inner_boundary<span class="classifier">astropy.units.quantity.Quantity</span></dt><dd><p>Velocity of the inner boundary.</p>
+<dt><strong>i_time_0</strong><span class="classifier">astropy.units.quantity.Quantity</span></dt><dd><p>Initial time for isotope decay. Set to 0 for no isotopes.</p>
 </dd>
-<dt>v_outer_boundary<span class="classifier">astropy.units.quantity.Quantity</span></dt><dd><p>Velocity of the outer boundary.</p>
+<dt><strong>v_inner_boundary</strong><span class="classifier">astropy.units.quantity.Quantity</span></dt><dd><p>Velocity of the inner boundary.</p>
 </dd>
-</dl>
+<dt><strong>v_outer_boundary</strong><span class="classifier">astropy.units.quantity.Quantity</span></dt><dd><p>Velocity of the outer boundary.</p>
 </dd>
 </dl>
 </dd>
@@ -851,9 +938,9 @@ end when selected shell No. is changed.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="tardis.visualization.widgets.custom_abundance.DensityEditor">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">tardis.visualization.widgets.custom_abundance.</span></span><span class="sig-name descname"><span class="pre">DensityEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">density_t_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velocity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell_no_widget</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tardis/visualization/widgets/custom_abundance.html#DensityEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tardis.visualization.widgets.custom_abundance.DensityEditor" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">tardis.visualization.widgets.custom_abundance.</span></span><span class="sig-name descname"><span class="pre">DensityEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell_no_widget</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tardis/visualization/widgets/custom_abundance.html#DensityEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tardis.visualization.widgets.custom_abundance.DensityEditor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Widget to edit density profile of simulation model.</p>
+<p>Widget to edit density profile of the model.</p>
 <p>It provides an interface to allow the user directly change
 the density, or calculate the density with given type and
 parameters.</p>
@@ -862,26 +949,20 @@ parameters.</p>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>shell_no</strong><span class="classifier">int</span></dt><dd><p>The selected shell number.</p>
 </dd>
-<dt><strong>trigger</strong><span class="classifier">bool</span></dt><dd><p>If False, disable the callback when density input is changed.</p>
+<dt><strong>_trigger</strong><span class="classifier">bool</span></dt><dd><p>If False, disable the callback when density input is changed.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p>Initialize DensityEditor with data and widget components.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl>
-<dt><strong>density</strong><span class="classifier">astropy.units.quantity.Quantity</span></dt><dd><blockquote>
-<div><p>Density data.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>velocity<span class="classifier">astropy.units.quantity.Quantity</span></dt><dd><p>Velocity data.</p>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>widget_data</strong><span class="classifier">CustomAbundanceWidgetData</span></dt><dd><p>Data in the custom abundance widget.</p>
 </dd>
-<dt>fig<span class="classifier">plotly.graph_objs._figurewidget.FigureWidget</span></dt><dd><p>The figure object of density plot.</p>
+<dt><strong>fig</strong><span class="classifier">plotly.graph_objs._figurewidget.FigureWidget</span></dt><dd><p>The figure object of density plot.</p>
 </dd>
-<dt>shell_no_widget<span class="classifier">ipywidgets.widgets.widget_selection.Dropdown</span></dt><dd><p>A widget to record the selected shell number.</p>
-</dd>
-</dl>
+<dt><strong>shell_no_widget</strong><span class="classifier">ipywidgets.widgets.widget_selection.Dropdown</span></dt><dd><p>A widget to record the selected shell number.</p>
 </dd>
 </dl>
 </dd>
@@ -892,11 +973,6 @@ parameters.</p>
 <dd><p>Create widget components in density editor GUI and register
 callbacks for widgets.</p>
 </dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="tardis.visualization.widgets.custom_abundance.DensityEditor.density_t_0">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">density_t_0</span></span><a class="headerlink" href="#tardis.visualization.widgets.custom_abundance.DensityEditor.density_t_0" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tardis.visualization.widgets.custom_abundance.DensityEditor.display">
@@ -942,7 +1018,22 @@ type parameters.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tardis.visualization.widgets.custom_abundance.DensityEditor.input_d_eventhandler">
 <span class="sig-name descname"><span class="pre">input_d_eventhandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tardis/visualization/widgets/custom_abundance.html#DensityEditor.input_d_eventhandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tardis.visualization.widgets.custom_abundance.DensityEditor.input_d_eventhandler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the data and the widgets when it gets new density input.</p>
+<dd><p>Update the data and the widgets when the widget gets new
+density input.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>obj</strong><span class="classifier">traitlets.utils.bunch.Bunch</span></dt><dd><p>A dictionary holding the information about the change.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tardis.visualization.widgets.custom_abundance.DensityEditor.input_d_time_0_eventhandler">
+<span class="sig-name descname"><span class="pre">input_d_time_0_eventhandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tardis/visualization/widgets/custom_abundance.html#DensityEditor.input_d_time_0_eventhandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tardis.visualization.widgets.custom_abundance.DensityEditor.input_d_time_0_eventhandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update density time 0 data when the widget gets new input.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
@@ -1006,7 +1097,7 @@ shell No. changes.</p>
     <p>
         &#169; Copyright 2013-2021, TARDIS Collaboration.
       <span class="lastupdated">
-        Last updated on 23 Aug 2021.
+        Last updated on 24 Aug 2021.
       </span>
 
     </p>
